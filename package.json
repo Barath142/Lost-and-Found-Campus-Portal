@@ -1,0 +1,21 @@
+{
+  "name": "lost-and-found-campus-portal",
+  "version": "1.0.0",
+  "description": "A web-based portal for reporting and finding lost items on campus",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "lost-and-found",
+    "campus",
+    "portal"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
