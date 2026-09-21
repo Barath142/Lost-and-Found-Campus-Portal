@@ -1,4 +1,5 @@
 const express = require("express");
+const logger = require("./server/middleware/logger");
 
 const app = express();
 const PORT = 3000;
@@ -9,6 +10,12 @@ const PORT = 3000;
 
 // Read JSON data from requests
 app.use(express.json());
+
+// Serve static files from public folder
+app.use(express.static("public"));
+
+// Request Logger Middleware
+app.use(logger);
 
 // Allow requests from Live Server
 app.use((req, res, next) => {
@@ -21,6 +28,7 @@ app.use((req, res, next) => {
         "Access-Control-Allow-Headers",
         "Content-Type"
     );
+
     next();
 });
 
@@ -110,7 +118,6 @@ app.post("/api/items", (req, res) => {
         status
     } = req.body;
 
-    // Check required fields
     if (
         !name ||
         !description ||
@@ -124,7 +131,6 @@ app.post("/api/items", (req, res) => {
         });
     }
 
-    // Create new item
     const newItem = {
         id: String(items.length + 1),
         name: name,
@@ -133,14 +139,59 @@ app.post("/api/items", (req, res) => {
         status: status
     };
 
-    // Add item to array
     items.push(newItem);
 
-    // Send response
     res.status(201).json({
         success: true,
         message: "Item reported successfully",
         item: newItem
+    });
+});
+
+// ===============================
+// PUT - Update Item
+// ===============================
+
+app.put("/api/items/:id", (req, res) => {
+
+    const item = items.find(
+        i => i.id === req.params.id
+    );
+
+    if (!item) {
+        return res.status(404).json({
+            success: false,
+            message: "Item not found"
+        });
+    }
+
+    const {
+        name,
+        description,
+        location,
+        status
+    } = req.body;
+
+    if (name) {
+        item.name = name;
+    }
+
+    if (description) {
+        item.description = description;
+    }
+
+    if (location) {
+        item.location = location;
+    }
+
+    if (status) {
+        item.status = status;
+    }
+
+    res.json({
+        success: true,
+        message: "Item updated successfully",
+        item: item
     });
 });
 
@@ -170,6 +221,31 @@ app.delete("/api/items/:id", (req, res) => {
         success: true,
         message: "Item deleted successfully",
         item: deletedItem[0]
+    });
+});
+
+// ===============================
+// 404 Error Handler
+// ===============================
+
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        message: "Route not found"
+    });
+});
+
+// ===============================
+// General Error Handler
+// ===============================
+
+app.use((err, req, res, next) => {
+
+    console.error(err.stack);
+
+    res.status(500).json({
+        success: false,
+        message: "Internal server error"
     });
 });
 

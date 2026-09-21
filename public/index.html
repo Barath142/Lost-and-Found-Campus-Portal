@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost and Found Campus Portal</title>
+</head>
+<body>
+
+    <h1>Lost and Found Campus Portal</h1>
+
+    <p>Welcome to the Campus Lost and Found Portal.</p>
+
+    <h2>Available Items</h2>
+
+    <button onclick="loadItems()">Load Lost and Found Items</button>
+
+    <ul id="itemsList"></ul>
+
+    <script>
+        async function loadItems() {
+            try {
+                const response = await fetch("/api/items");
+                const data = await response.json();
+
+                const itemsList = document.getElementById("itemsList");
+
+                itemsList.innerHTML = "";
+
+                data.items.forEach(item => {
+                    const listItem = document.createElement("li");
+
+                    listItem.textContent =
+                        `${item.name} - ${item.status} - ${item.location}`;
+
+                    itemsList.appendChild(listItem);
+                });
+
+            } catch (error) {
+                console.error("Error loading items:", error);
+            }
+        }
+    </script>
+
+</body>
+</html>
